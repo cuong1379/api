@@ -7,8 +7,9 @@ const {
   getSingleCustomer,
   updateCustomer,
   deleteCustomer,
+  getQueryCustomer,
 } = require("../controllers/customer");
-
+router.get("/", getQueryCustomer);
 router.post("/", createCustomer);
 router.get("/", getAllCustomer);
 router.get("/:id", getSingleCustomer);

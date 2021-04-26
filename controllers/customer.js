@@ -31,6 +31,38 @@ exports.createCustomer = (req, res) => {
     });
 };
 
+//query
+exports.getQueryCustomer = (req, res) => {
+  console.log(req.query);
+
+  const page = req.query.page && req.query.page;
+  const limit = req.query.limit && req.query.limit;
+  const typeSort = req.query.sortBy && req.query.sortBy.split(":")[1];
+  const typeSortQuery = typeSort !== "asc" ? -1 : 1;
+  const searchQ = req.query.q;
+
+  if (page || limit || typeSort || searchQ)
+    Customer.find({ name: { $regex: searchQ || "", $options: "i" } })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .sort({ createdAt: typeSortQuery })
+      .select("id name phone date count content time createdAt updatedAt")
+      .then((queryCustomer) => {
+        return res.status(200).json({
+          success: true,
+          message: "A list of query Customer",
+          customer: queryCustomer,
+        });
+      })
+      .catch((err) => {
+        res.status(500).json({
+          success: false,
+          message: "Server error. Please try again.",
+          error: err.message,
+        });
+      });
+};
+
 exports.getAllCustomer = (req, res) => {
   Customer.find()
     .select("id name phone date time count content")
