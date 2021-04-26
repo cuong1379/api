@@ -8,9 +8,9 @@ const {
   getQueryProduction,
   updateProduction,
   deleteProduction,
-  // getPaginationProduction,
+  // uploadProduction,
 } = require("../controllers/production");
-// router.get("/", getPaginationProduction);
+// router.post("/upload", uploadProduction);
 router.post("/", createProduction);
 router.get("/", getQueryProduction);
 router.get("/:id", getSingleProduction);

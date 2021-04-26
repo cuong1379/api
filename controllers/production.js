@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const Production = require("../models/production");
-const bodyParser = require("body-parser");
-const url = require("url");
-const querystring = require("querystring");
+// const bodyParser = require("body-parser");
+// const multer = require("multer");
 
 exports.createProduction = (req, res) => {
   console.log(req.body);
@@ -34,6 +33,23 @@ exports.createProduction = (req, res) => {
     });
 };
 
+// exports.uploadProduction = (req, res) => {
+//   console.log(req.body);
+
+//   var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, "uploads");
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, file.fieldname + "-" + Date.now());
+//     },
+//   });
+
+//   console.log("asd", destination, filename);
+
+//   var upload = multer({ storage: storage });
+// };
+
 exports.getAllProduction = (req, res) => {
   Production.find()
     .select("id name price description thumbnail category quantity")
@@ -62,9 +78,11 @@ exports.getQueryProduction = (req, res) => {
   const limit = req.query.limit && req.query.limit;
   const typeSort = req.query.sortBy && req.query.sortBy.split(":")[1];
   const typeSortQuery = typeSort !== "asc" ? -1 : 1;
+  const searchQ = req.query.q;
 
-  if (queryCategory || page || limit || typeSort)
+  if (queryCategory || page || limit || typeSort || searchQ)
     Production.find({ category: queryCategory })
+      .find({ name: { $regex: searchQ || "", $options: "i" } })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .sort({ price: typeSortQuery })
