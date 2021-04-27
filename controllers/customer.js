@@ -45,7 +45,7 @@ exports.getQueryCustomer = (req, res) => {
     Customer.find({ name: { $regex: searchQ || "", $options: "i" } })
       .limit(limit * 1)
       .skip((page - 1) * limit)
-      .sort({ createdAt: typeSortQuery })
+      .sort({ date: typeSortQuery })
       .select("id name phone date count content time createdAt updatedAt")
       .then((queryCustomer) => {
         return res.status(200).json({
