@@ -1,0 +1,54 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\cuong\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add nodemailer
+
+PATH: 
+  C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\cuong\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\Git\cmd;C:\Program Files\nodejs;C:\Users\cuong\.windows-build-tools\python27;C:\Users\cuong\.windows-build-tools\python27;C:\Users\cuong\AppData\Local\Microsoft\WindowsApps;C:\Users\cuong\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\cuong\AppData\Roaming\npm
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  16.0.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: 4208:error:1408F119:SSL routines:ssl3_get_record:decryption failed or bad record mac:c:\ws\deps\openssl\openssl\ssl\record\ssl3_record.c:677:
+
+npm manifest: 
+  {
+    "name": "crudjs",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "nodemon app.js"
+    },
+    "author": "cuong",
+    "license": "ISC",
+    "dependencies": {
+      "bcryptjs": "^2.4.3",
+      "body-parser": "^1.19.0",
+      "config": "^3.3.3",
+      "cors": "^2.8.5",
+      "dotenv": "^8.2.0",
+      "express": "^4.17.1",
+      "express-fileupload": "^1.2.1",
+      "joi": "^17.4.0",
+      "jsonwebtoken": "^8.5.1",
+      "method-override": "^3.0.0",
+      "mongoose": "^5.11.9",
+      "multer": "^1.4.2",
+      "nodemon": "^2.0.6",
+      "querystring": "^0.2.1",
+      "url": "^0.11.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

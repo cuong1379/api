@@ -10,6 +10,13 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
+  forgotPasswordToken: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

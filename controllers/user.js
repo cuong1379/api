@@ -2,13 +2,14 @@ const mongoose = require("mongoose");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 const { registerValidator } = require("./../validations/auth");
 // const verifyToken = require("./../middlewares/verifyToken");
 
 exports.createUser = async (req, res) => {
   console.log(req.body);
-  const { error } = registerValidator(req.body);
-  if (error) return res.status(422).send(error.details[0].message);
+  // const { error } = registerValidator(req.body);
+  // if (error) return res.status(422).send(error.details[0].message);
 
   const checkUserExist = await User.findOne({
     username: req.body.username,
@@ -19,11 +20,13 @@ exports.createUser = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
 
-  console.log("%c%s", "color: #24eb24", hashPassword);
+  console.log("day la hash pass", hashPassword);
 
   const user = new User({
     username: req.body.username,
     password: hashPassword,
+    email: req.body.email,
+    forgotPasswordToken: "",
   });
 
   return user
@@ -46,6 +49,7 @@ exports.createUser = async (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
+  console.log("vailoan", req.body);
   const user = await User.findOne({ username: req.body.username });
   console.log(user);
   if (!user) return res.status(422).send("username is not correct");
@@ -65,9 +69,55 @@ exports.loginUser = async (req, res) => {
   });
 };
 
+exports.forgotPassword = async (req, res) => {
+  console.log("forgotPassword", req.body);
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) return res.status(422).send("khong co email nay");
+
+  const token = await jwt.sign(
+    { email: user.email },
+    process.env.TOKEN_SECRET,
+    {
+      expiresIn: 60 * 60 * 24,
+    }
+  );
+
+  console.log("day la token", token);
+  // user.forgotPasswordToken = token;
+
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "nguyennghia200iq@gmail.com",
+      pass: "cuong179",
+    },
+  });
+
+  var mailOptions = {
+    from: "nguyennghia200iq@gmail.com",
+    to: req.body.email,
+    subject: "Mail reset password",
+    text: `Đây là token reset: ${token}`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+
+  return res.status(200).json({
+    status: "ok",
+    message: "hehe",
+    user,
+  });
+};
+
 exports.getAllUser = (req, res) => {
   User.find()
-    .select("id username password")
+    .select("id username password email forgotPasswordToken ")
     .then((allUser) => {
       return res.status(200).json({
         success: true,

@@ -8,8 +8,9 @@ const {
   updateUser,
   deleteUser,
   loginUser,
+  forgotPassword,
 } = require("../controllers/user");
-
+router.post("/forgot-password", forgotPassword);
 router.post("/register", createUser);
 router.post("/login", loginUser);
 router.get("/", getAllUser);

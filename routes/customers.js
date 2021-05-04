@@ -9,6 +9,7 @@ const {
   deleteCustomer,
   getQueryCustomer,
 } = require("../controllers/customer");
+
 router.get("/", getQueryCustomer);
 router.post("/", createCustomer);
 router.get("/", getAllCustomer);
