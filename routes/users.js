@@ -9,7 +9,9 @@ const {
   deleteUser,
   loginUser,
   forgotPassword,
+  resetPassword,
 } = require("../controllers/user");
+router.post("/reset-password", resetPassword);
 router.post("/forgot-password", forgotPassword);
 router.post("/register", createUser);
 router.post("/login", loginUser);

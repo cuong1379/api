@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const { registerValidator } = require("./../validations/auth");
+const e = require("express");
 // const verifyToken = require("./../middlewares/verifyToken");
 
 exports.createUser = async (req, res) => {
@@ -54,7 +55,9 @@ exports.loginUser = async (req, res) => {
   console.log(user);
   if (!user) return res.status(422).send("username is not correct");
 
-  const checkPassword = bcrypt.compare(req.body.password, user.password);
+  const checkPassword = await bcrypt.compare(req.body.password, user.password);
+  console.log(checkPassword);
+
   if (!checkPassword) return res.status(422).send(" Password is not correct");
 
   const token = await jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
@@ -83,7 +86,15 @@ exports.forgotPassword = async (req, res) => {
   );
 
   console.log("day la token", token);
+  console.log("day la id cua user ", user.id);
   // user.forgotPasswordToken = token;
+  User.updateOne({ _id: user.id }, { $set: { forgotPasswordToken: token } })
+    .then((obj) => {
+      console.log("Updated - " + obj);
+    })
+    .catch((err) => {
+      console.log("Error: " + err);
+    });
 
   var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -97,7 +108,7 @@ exports.forgotPassword = async (req, res) => {
     from: "nguyennghia200iq@gmail.com",
     to: req.body.email,
     subject: "Mail reset password",
-    text: `Đây là token reset: ${token}`,
+    text: `Bấm vào link sau để đổi mật khẩu: http://localhost:8000/user/reset-password/${token}`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -107,11 +118,47 @@ exports.forgotPassword = async (req, res) => {
       console.log("Email sent: " + info.response);
     }
   });
+  return res.status(200).json({
+    status: "ok",
+    message: "hehe",
+  });
+};
+
+exports.resetPassword = async (req, res) => {
+  console.log("day la token", req.body.token);
+  console.log("day la pass", req.body.password.password);
+
+  const user = await User.findOne({ forgotPasswordToken: req.body.token });
+  if (!user) return res.status(422).send("khong co ng nay");
+
+  const salt = await bcrypt.genSalt(10);
+
+  const hashPassword = await bcrypt.hash(req.body.password, salt);
+
+  User.updateOne(
+    { _id: user.id },
+    { $set: { password: hashPassword, forgotPasswordToken: "" } }
+  )
+    .then((obj) => {
+      console.log("Updated - " + obj);
+      // return res.status(200).json({
+      //   success: true,
+      //   message: "ahihi",
+      //   user: obj,
+      // });
+    })
+    .catch((err) => {
+      console.log("Error: " + err);
+      // res.status(500).json({
+      //   success: false,
+      //   message: "Server error. Please try again.",
+      //   error: err.message,
+      // });
+    });
 
   return res.status(200).json({
     status: "ok",
     message: "hehe",
-    user,
   });
 };
 
